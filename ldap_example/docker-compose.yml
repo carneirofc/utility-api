@@ -1,0 +1,8 @@
+version: "3.7"
+services:
+    haproxy:
+        image: lnlscon/haproxy:2.1.3
+        network_mode: host
+        volumes:
+            - ./auth-request.lua:/usr/share/haproxy/auth-request.lua
+            - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg

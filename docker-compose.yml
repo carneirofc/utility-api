@@ -4,6 +4,6 @@ services:
         image: "lnlscon/utility:v1.8"
         build: "."
         volumes:
-            - "/home/carneirofc/Devel/cons-utility-api/Redes e Beaglebones.xlsx:/opt/spreadsheet/Redes e Beaglebones.xlsx:ro"
+            - "./extra/Redes e Beaglebones.xlsx:/opt/spreadsheet/Redes e Beaglebones.xlsx:ro"
         ports:
             - 8080:80
