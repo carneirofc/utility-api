@@ -1,5 +1,4 @@
-from flask import Blueprint
-from flask import request
+from flask import Blueprint, request
 
 from conscommon import get_logger
 from conscommon.spreadsheet import SheetName

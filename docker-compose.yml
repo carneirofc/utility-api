@@ -1,9 +1,20 @@
 version: "3.7"
 services:
     app:
-        image: "lnlscon/utility:v1.8"
+        image: "lnlscon/utility:v1.9"
         build: "."
         volumes:
             - "./extra/Redes e Beaglebones.xlsx:/opt/spreadsheet/Redes e Beaglebones.xlsx:ro"
         ports:
             - 8080:80
+        networks:
+            - auth-proxy
+
+    redis:
+        image: "redis:6-alpine"
+        hostname: "redis"
+        networks:
+            - auth-proxy
+
+networks:
+    auth-proxy:

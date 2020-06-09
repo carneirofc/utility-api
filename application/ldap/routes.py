@@ -1,4 +1,4 @@
-from flask import escape, request, json
+from flask import escape, request, json, Blueprint
 from application import app
 
 from application.ldap.auth import Auth
@@ -11,8 +11,12 @@ basic_headers = {
     "Set-Cookie": "valid=yes; Max-Age=10; HttpOnly",
 }
 
+ldap_bp = Blueprint(
+    "ldap_bp", __name__, template_folder="templates", static_folder="static"
+)
 
-@app.route("/ldap/Archiver")
+
+@ldap.route("/ldap/Archiver")
 def auth():
     logger = get_logger()
 

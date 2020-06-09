@@ -10,7 +10,7 @@ class Config:
     USE_RELOADER = False
 
     SECRET_KEY = os.environ.get("SECRET_KEY", "")
-    REDIS_URL = os.environ.get("REDIS_URL", "redis://admin:admin@localhost:6379/0")
+    REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0")
 
     """ This can be an url or a filesystem path.
         If it's a filesystem path, it will automatically be updated when the file changes. """
