@@ -36,6 +36,7 @@ core.register_service("auth-basic-service", "http", function(applet)
       applet:send(response)
 end)
 
+-- 
 core.register_action("auth-request", { "http-req" }, function(txn, be, path)
 	txn:set_var("txn.auth_response_successful", false)
 
@@ -100,10 +101,13 @@ core.register_action("auth-request", { "http-req" }, function(txn, be, path)
 	-- 2xx: Allow request.
 	if 200 <= c and c < 300 then
 		txn:set_var("txn.auth_response_successful", true)
+        txn:set_var("txn.auth_response_authorization", h["Authorization"])
+
 	-- Don't allow other codes.
 	-- Codes with Location: Passthrough location at redirect.
 	elseif c == 301 or c == 302 or c == 303 or c == 307 or c == 308 then
 		txn:set_var("txn.auth_response_location", h["location"])
+
 	-- 401 / 403: Do nothing, everything else: log.
 	elseif c ~= 401 and c ~= 403 then
 		txn:Warning("Invalid status code in auth-request backend '" .. be .. "': " .. c)

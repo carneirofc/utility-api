@@ -1,12 +1,40 @@
 import base64
+import hashlib
 import ldap
-import typing
 import logging
+import typing
+import random
 
+from flask import make_response, current_app
+from application import redis_client
 from application.utils import get_logger
 
 logger = get_logger()
 logger.setLevel(logging.DEBUG)
+
+
+def generate_token(data, expire: int = 3600) -> bytes:
+    """ Generate token based on the authorization """
+    token = hashlib.blake2s(
+        data.encode("utf-8"),
+        key=current_app.config["SECRET_KEY"].encode("utf-8"),
+        salt="{:.4}".format(random.random()).encode("utf-8"),
+    ).hexdigest()
+    logger.info('Generate token: "{}" from "{}"'.format(token, data))
+    redis_client.set(token, data, ex=expire)
+    return token
+
+
+def delete_token(token: bytes):
+    logger.info('Delete token: "{}"'.format(token))
+    redis_client.delete(token)
+
+
+def get_from_token(token: bytes, expire: int = 3600):
+    user_data = redis_client.get(token)
+    redis_client.expire(token, expire)
+    logger.info('Get token: "{}"="{}", expire in {}s'.format(token, user_data, expire))
+    return user_data.decode("utf-8")
 
 
 class Auth:
@@ -14,7 +42,7 @@ class Auth:
         # fmt: off
         self.authorization = headers.get("Authorization",       None)
         self.bind_dn       = headers.get("X-Ldap-BindDN",       "cn=admin,dc=lnls,dc=br")
-        self.bind_pass     = headers.get("X-Ldap-BindPass",     None)
+        self.bind_pass     = headers.get("X-Ldap-BindPass",     current_app.config['LDAP_BINDPASS'])
         self.group_base_dn = headers.get("X-Ldap-Group-BaseDN", "")
         self.group_cns     = headers.get("X-Ldap-Group-CNs",    "").split(",")
         self.realm         = headers.get("X-Ldap-Realm",        "Default LDAP Realm")
@@ -119,7 +147,6 @@ class Auth:
                 res = l.search_s(
                     self.group_base_dn, ldap.SCOPE_SUBTREE, search_string, ["member"],
                 )
-                print(res)
                 logger.debug(
                     "check if {} is member of {},{}".format(
                         ldap_dn, gcn, self.group_base_dn

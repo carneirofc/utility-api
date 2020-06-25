@@ -1,15 +1,16 @@
 from flask import Flask, escape, request
 from flask_redis import FlaskRedis
 
+redis_client = FlaskRedis()
+
 
 def create_app():
     app = Flask(__name__, instance_relative_config=False)
     app.config.from_object("config.Config")
 
-    redis_client = FlaskRedis()
-    redis_client.init_app(app)
-
     with app.app_context():
+        redis_client.init_app(app)
+
         from application.spreadsheet.backend import BackendServer
 
         backendServer = BackendServer()
