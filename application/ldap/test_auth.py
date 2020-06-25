@@ -12,7 +12,7 @@ import logging
             - DB_PASSWORD=controle 
             - DB_NAME=olog 
             - REALM_SEARCH_BIND_DN="cn=admin,dc=lnls,dc=br"
-            - REALM_SEARCH_BIND_PASS="***REMOVED***"
+            - REALM_SEARCH_BIND_PASS=""
             - REALM_SEARCH_FILTER="cn=%s"
             - REALM_BASE_DN="ou=users,dc=lnls,dc=br"
             - REALM_GROUP_DN="ou=olog,ou=groups,dc=lnls,dc=br"
@@ -21,13 +21,13 @@ import logging
 """
 if __name__ == "__main__":
     headers_olog = {
-        "X-Ldap-BindPass": "***REMOVED***",
+        "X-Ldap-BindPass": "",
         "X-Ldap-Group-BaseDN": "ou=olog,ou=groups,dc=lnls,dc=br",
         "X-Ldap-Group-CNs": "olog-admins,olog-logbooks,olog-logs,olog-tags",
     }
 
     headers_archiver = {
-        "X-Ldap-BindPass": "***REMOVED***",
+        "X-Ldap-BindPass": "",
         "X-Ldap-Group-BaseDN": "ou=epics-archiver,ou=groups,dc=lnls,dc=br",
         "X-Ldap-Group-CNs": "archiver-admins",
     }
