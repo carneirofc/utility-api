@@ -10,7 +10,8 @@ class Config:
     TESTING = False
     USE_RELOADER = False
 
-    SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_urlsafe(16))
+    # SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_urlsafe(16))
+    SECRET_KEY = secrets.token_urlsafe(16)
     REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0")
 
     LDAP_BINDPASS = os.environ.get("LDAP_BINDPASS", "")

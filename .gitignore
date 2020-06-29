@@ -3,3 +3,5 @@
 __pycache__/
 .extra/
 start.sh
+env_file
+envvars

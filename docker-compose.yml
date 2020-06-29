@@ -4,17 +4,18 @@ services:
         image: "lnlscon/utility:v1.9"
         build: "."
         volumes:
-            - "./extra/Redes e Beaglebones.xlsx:/opt/spreadsheet/Redes e Beaglebones.xlsx:ro"
+            - ".:/opt/cons-utility-api"
+            - "./extra/Redes e Beaglebones.xlsx:/opt/Redes e Beaglebones.xlsx:ro"
         ports:
             - 8080:80
         networks:
             - auth-proxy
+        env_file:
+            - ./env_file
 
     redis:
         image: "redis:6-alpine"
         hostname: "redis"
-        ports:
-            - 6379:6379
         networks:
             - auth-proxy
 

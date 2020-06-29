@@ -32,6 +32,9 @@ def delete_token(token: bytes):
 
 def get_from_token(token: bytes, expire: int = 3600):
     user_data = redis_client.get(token)
+    if not user_data:
+        raise Exception("Token invalid")
+
     redis_client.expire(token, expire)
     logger.info('Get token: "{}"="{}", expire in {}s'.format(token, user_data, expire))
     return user_data.decode("utf-8")
