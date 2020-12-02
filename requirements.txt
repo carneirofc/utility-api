@@ -1,5 +1,8 @@
 Flask==1.1.1
+redis==3.5.3
+flask-redis==0.4.0
 pandas==1.0.3
 requests==2.23.0
 xlrd==1.2.0
 mod_wsgi==4.7.1
+python-ldap==3.2.0

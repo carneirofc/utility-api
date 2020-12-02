@@ -1,5 +1,6 @@
 """Flask config class."""
 import os
+import secrets
 
 
 class Config:
@@ -9,8 +10,11 @@ class Config:
     TESTING = False
     USE_RELOADER = False
 
-    SECRET_KEY = os.environ.get("SECRET_KEY", "")
-    REDIS_URL = os.environ.get("REDIS_URL", "redis://admin:admin@localhost:6379/0")
+    # SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_urlsafe(16))
+    SECRET_KEY = secrets.token_urlsafe(16)
+    REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0")
+
+    LDAP_BINDPASS = os.environ.get("LDAP_BINDPASS", "")
 
     """ This can be an url or a filesystem path.
         If it's a filesystem path, it will automatically be updated when the file changes. """
