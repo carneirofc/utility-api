@@ -1,4 +1,4 @@
-cons-utility-api
+utility-api
 ================
 
 Webserver containing usefull APIs for Sirius CONS.
