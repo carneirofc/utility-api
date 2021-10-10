@@ -40,13 +40,13 @@ def internal_server_error(e):
 def reload():
     client = BackendClient()
     client.reloadData()
-    return "Data reloaded succesfully!", 200
+    return "Data reloaded succesfully!", HttpStatusCode.HTTP_200_OK
 
 
 @spreadsheet_bp.route("/status")
 def status():
     # @todo: Return status information.
-    return "Healthy!", 200
+    return "Healthy!", HttpStatusCode.HTTP_200_OK
 
 
 @spreadsheet_bp.route("/devices")
@@ -56,4 +56,4 @@ def devices():
 
     client = BackendClient()
     response = client.getDevice(deviceType=deviceType, ip=ip)
-    return response, 200
+    return response, HttpStatusCode.HTTP_200_OK
