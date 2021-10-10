@@ -23,8 +23,7 @@ def invalid_command(e):
 
 @spreadsheet_bp.errorhandler(InvalidDevice)
 def invalid_device(e):
-    # logger.exception("Invalid Device")
-
+    logger.exception("Invalid Device")
     return jsonify(e.to_dict()), e.status_code
 
 

@@ -1,5 +1,3 @@
-import enum
-
 """
 Descriptive HTTP status codes, for code readability.
 See RFC 2616 and RFC 6585.
@@ -9,7 +7,7 @@ Source: https://github.com/flask-api/flask-api/blob/develop/flask_api/status.py
 """
 
 
-class HttpStatusCode(int, enum.Enum):
+class HttpStatusCode:
     HTTP_100_CONTINUE = 100
     HTTP_101_SWITCHING_PROTOCOLS = 101
 
