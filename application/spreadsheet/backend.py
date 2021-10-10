@@ -5,8 +5,8 @@ import threading
 from typing import Dict
 
 from siriuscommon import get_logger
-from siriuscommon.spreadsheet import SheetName
-from siriuscommon.spreadsheet.parser import loadSheets
+from siriuscommon.devices.spreadsheet import SheetName
+from siriuscommon.devices.spreadsheet.parser import loadSheets
 
 from .common import SPREADSHEET_SOCKET_PATH, SPREADSHEET_XLSX_PATH, BasicComm, Command
 

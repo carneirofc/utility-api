@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from siriuscommon import get_logger
-from siriuscommon.spreadsheet import SheetName
+from siriuscommon.devices.spreadsheet import SheetName
 
 from .client import BackendClient, InvalidCommand, InvalidDevice
 

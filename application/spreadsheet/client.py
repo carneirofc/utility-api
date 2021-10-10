@@ -5,7 +5,7 @@ import threading
 import time
 
 from siriuscommon import get_logger
-from siriuscommon.spreadsheet import SheetName
+from siriuscommon.devices.spreadsheet import SheetName
 
 from .common import (
     SPREADSHEET_SOCKET_PATH,

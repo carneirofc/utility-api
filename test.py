@@ -2,9 +2,9 @@
 
 import unittest
 
-from siriuscommon.data_model import getBeaglesFromList, getDevicesFromBeagles
-from siriuscommon.spreadsheet import SheetName
-from siriuscommon.spreadsheet.parser import loadSheets
+from siriuscommon.devices.data_model import getBeaglesFromList, getDevicesFromBeagles
+from siriuscommon.devices.spreadsheet import SheetName
+from siriuscommon.devices.spreadsheet.parser import loadSheets
 
 
 class TestParser(unittest.TestCase):
