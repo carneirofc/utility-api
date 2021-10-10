@@ -1,7 +1,6 @@
-.vscode/
 *.pyc
-__pycache__/
 .extra/
-start.sh
+__pycache__/
 env_file
 envvars
+start.sh
