@@ -1,9 +1,8 @@
 from flask import Blueprint, request
+from siriuscommon import get_logger
+from siriuscommon.spreadsheet import SheetName
 
-from conscommon import get_logger
-from conscommon.spreadsheet import SheetName
-
-from .client import BackendClient, InvalidDevice, InvalidCommand
+from .client import BackendClient, InvalidCommand, InvalidDevice
 
 # Set up a Blueprint
 spreadsheet_bp = Blueprint(
@@ -19,12 +18,12 @@ def reload():
     try:
         client = BackendClient()
         client.reloadData()
-        return f"Data reloaded succesfully!", 200
+        return "Data reloaded succesfully!", 200
 
     except Exception:
         logger.exception("reload entries failed.")
         return (
-            f"Unable to update entries from spreadsheet.",
+            "Unable to update entries from spreadsheet.",
             400,
         )
 
@@ -32,7 +31,7 @@ def reload():
 @spreadsheet_bp.route("/status")
 def status():
     # @todo: Return status information.
-    return f"Healthy!", 200
+    return "Healthy!", 200
 
 
 @spreadsheet_bp.route("/devices")

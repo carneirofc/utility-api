@@ -1,20 +1,14 @@
-import socket
 import os
 import pickle
+import socket
 import threading
 from typing import Dict
 
-from conscommon import get_logger
-from conscommon.spreadsheet import SheetName
-from conscommon.spreadsheet.parser import loadSheets
+from siriuscommon import get_logger
+from siriuscommon.spreadsheet import SheetName
+from siriuscommon.spreadsheet.parser import loadSheets
 
-from .common import (
-    BasicComm,
-    Command,
-    SPREADSHEET_SOCKET_PATH,
-    SPREADSHEET_XLSX_PATH,
-)
-
+from .common import SPREADSHEET_SOCKET_PATH, SPREADSHEET_XLSX_PATH, BasicComm, Command
 
 SERVER_SOCKET_TIMEOUT = 5
 

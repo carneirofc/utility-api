@@ -2,7 +2,7 @@ import select
 from enum import Enum, unique
 
 from flask import current_app
-from conscommon import get_logger
+from siriuscommon import get_logger
 
 logger = get_logger("Spreadsheet Common")
 

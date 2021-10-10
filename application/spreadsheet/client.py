@@ -4,17 +4,17 @@ import socket
 import threading
 import time
 
-from conscommon import get_logger
-from conscommon.spreadsheet import SheetName
+from siriuscommon import get_logger
+from siriuscommon.spreadsheet import SheetName
+
 from .common import (
-    BasicComm,
-    Command,
     SPREADSHEET_SOCKET_PATH,
     SPREADSHEET_XLSX_PATH,
-    InvalidDevice,
+    BasicComm,
+    Command,
     InvalidCommand,
+    InvalidDevice,
 )
-
 
 CLIENT_SOCKET_TIMEOUT = 10
 
@@ -79,7 +79,7 @@ class BackendClient(BasicComm):
         return self.sendCommand({"command": Command.RELOAD_DATA})
 
     def getDevice(self, ip, deviceType):
-        if not SheetName.has_key(deviceType):
+        if not (deviceType in SheetName):
             raise InvalidDevice('Invalid device "{}".'.format(deviceType))
 
         return self.sendCommand(

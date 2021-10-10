@@ -2,9 +2,9 @@
 
 import unittest
 
-from conscommon.data_model import getDevicesFromBeagles, getBeaglesFromList
-from conscommon.spreadsheet import SheetName
-from conscommon.spreadsheet.parser import loadSheets
+from siriuscommon.data_model import getBeaglesFromList, getDevicesFromBeagles
+from siriuscommon.spreadsheet import SheetName
+from siriuscommon.spreadsheet.parser import loadSheets
 
 
 class TestParser(unittest.TestCase):

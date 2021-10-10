@@ -36,7 +36,7 @@ core.register_service("auth-basic-service", "http", function(applet)
       applet:send(response)
 end)
 
--- 
+--
 core.register_action("auth-request", { "http-req" }, function(txn, be, path)
 	txn:set_var("txn.auth_response_successful", false)
 

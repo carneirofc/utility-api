@@ -2,7 +2,7 @@ import logging
 
 
 def get_logger(name=__file__, level=logging.INFO):
-    """ Returns a logger object """
+    """Returns a logger object"""
 
     logger = logging.getLogger(name)
 

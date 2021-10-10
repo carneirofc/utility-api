@@ -17,7 +17,8 @@ class Config:
     LDAP_BINDPASS = os.environ.get("LDAP_BINDPASS", "")
 
     """ This can be an url or a filesystem path.
-        If it's a filesystem path, it will automatically be updated when the file changes. """
+        If it's a filesystem path, it will automatically be updated when the file changes.
+    """
     SPREADSHEET_XLSX_PATH = os.environ.get(
         "SPREADSHEET_XLSX_PATH",
         "http://10.0.38.42/streamdevice-ioc/Redes%20e%20Beaglebones.xlsx",
