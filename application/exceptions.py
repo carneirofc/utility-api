@@ -1,15 +1,10 @@
-import sys
 import traceback
 
 from .status import HttpStatusCode
 
 
 def _stracktrace():
-    e_type, e_value, e_traceback = sys.exc_info()
-    if not e_type or not e_value or not e_traceback:
-        return ""
-    tb = traceback.format_exception(e_type, e_value, e_traceback)
-    return "\n".join(tb)
+    return traceback.format_exc()
 
 
 class APIException(Exception):
@@ -32,7 +27,7 @@ class APIException(Exception):
         return _stracktrace()
 
     def __str__(self):
-        return str(self.to_dict())
+        return f"{self}(message={self.message})"
 
 
 class ParseError(APIException):

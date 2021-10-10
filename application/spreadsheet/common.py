@@ -3,6 +3,10 @@ from enum import Enum, unique
 
 from flask import current_app
 from siriuscommon import get_logger
+from siriuscommon.devices.spreadsheet import SheetName
+
+from ..exceptions import APIException
+from ..status import HttpStatusCode
 
 logger = get_logger("Spreadsheet Common")
 
@@ -14,12 +18,16 @@ class Command(Enum):
     SHUTDOWN = 3
 
 
-class InvalidCommand(Exception):
-    pass
+class InvalidCommand(APIException):
+    status_code = HttpStatusCode.HTTP_400_BAD_REQUEST
 
 
-class InvalidDevice(Exception):
-    pass
+class InvalidDevice(APIException):
+    status_code = HttpStatusCode.HTTP_400_BAD_REQUEST
+
+    def __init__(self, message: str):
+        msg_detail = 'Available "deviceType" options are "{}".'.format(SheetName.keys())
+        self.message = f"{message}\n{msg_detail}"
 
 
 class BasicComm:
