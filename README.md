@@ -1,18 +1,10 @@
-utility-api
-================
+# utility-api
 
-Webserver containing usefull APIs for Sirius CONS.
+Webserver containing usefull APIs for Sirius.
+## Dependencies
+Python LDAP module requires the following libraries (Ubuntu/Debian):
+```
+apt instal libsasl2-dev, libldap2-dev & libssl-dev
+```
 
-Spreadsheet
------------
-
-|Endpoint|Desc|Parameters|
-|:------:|:--:|:--------:|
-|`/devices?type="type"`|Get a json containing all devices of the requested type| One of the supported types|
-|`/reload`|Reload the content in the spreadsheet, this is done automatically by the websever|||
-
-|Supported Types|
-|:-------------:|
-| agilent|
-|mks|
-
+# Spreadsheet
