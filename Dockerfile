@@ -7,6 +7,7 @@ RUN apt update -y && \
         apache2 \
         apache2-dev \
         gcc \
+        libldap2-dev \
         libsasl2-dev \
         libssl-dev \
         python-dev
