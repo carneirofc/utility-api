@@ -5,10 +5,11 @@ import random
 import typing
 
 import ldap
+import ldap.ldapobject
 from flask import current_app
 
-from application import redis_client
-from application.utils import get_logger
+from .. import redis_client
+from ..common.utils import get_logger
 
 logger = get_logger()
 logger.setLevel(logging.DEBUG)
@@ -27,7 +28,7 @@ def generate_token(data, expire: int = 3600):
 
 
 def delete_token(token: bytes):
-    logger.info(f'Delete token: "{token}"')
+    logger.info(f'Delete token: "{str(token)}"')
     redis_client.delete(token)
 
 
@@ -37,7 +38,7 @@ def get_from_token(token: bytes, expire: int = 3600):
         raise Exception("Token invalid")
 
     redis_client.expire(token, expire)
-    logger.info('Get token: "{}"="{}", expire in {}s'.format(token, user_data, expire))
+    logger.info(f'Get token: "{str(token)}"="{user_data}", expire in {expire}s')
     return user_data.decode("utf-8")
 
 
@@ -78,7 +79,9 @@ class Auth:
                 )
             )
 
-    def get_search_user(self, ldap_connection, user, passw):
+    def get_search_user(
+        self, ldap_connection: ldap.ldapobject.LDAPObject, user: str, passw: str
+    ):
         logger.debug("binding as search user")
         ldap_connection.bind_s(self.bind_dn, self.bind_pass, ldap.AUTH_SIMPLE)
 
@@ -119,7 +122,7 @@ class Auth:
             return None
         return ldap_dn
 
-    def authenticate(self, user, passw):
+    def authenticate(self, user: str, passw: str):
         try:
 
             ldap_connection = ldap.initialize(self.url)

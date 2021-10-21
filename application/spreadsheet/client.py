@@ -4,9 +4,9 @@ import socket
 import threading
 import time
 
-from siriuscommon import get_logger
 from siriuscommon.devices.spreadsheet import SheetName
 
+from ..common.utils import get_logger
 from .common import (
     SPREADSHEET_SOCKET_PATH,
     SPREADSHEET_XLSX_PATH,

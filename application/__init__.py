@@ -26,7 +26,7 @@ def create_app():
 
         app.register_blueprint(spreadsheet_routes.spreadsheet_bp)
 
-        import application.ldap.routes as ldap_routes
+        import application.ldap_bp.routes as ldap_routes
 
         app.register_blueprint(ldap_routes.ldap_bp)
 

@@ -1,12 +1,13 @@
 import select
 from enum import Enum, unique
+from socket import socket
 
 from flask import current_app
-from siriuscommon import get_logger
 from siriuscommon.devices.spreadsheet import SheetName
 
-from ..exceptions import APIException
-from ..status import HttpStatusCode
+from ..common.exceptions import APIException
+from ..common.status import HttpStatusCode
+from ..common.utils import get_logger
 
 logger = get_logger("Spreadsheet Common")
 
@@ -34,20 +35,20 @@ class BasicComm:
     def __init__(self):
         self.socket_timeout = 0
 
-    def sendBytes(self, s, payload):
+    def sendBytes(self, s: socket, payload: bytes):
         LEN = len(payload)
         _num = 0
         while _num != LEN:
-            ready = select.select([], [s], [], self.socket_timeout)
-            if ready[1]:
+            __rlist, __wlist, __xlist = select.select([], [s], [], self.socket_timeout)
+            if __wlist:
                 _num += s.send(payload[_num:])
 
-    def recvBytes(self, s, LEN):
+    def recvBytes(self, s: socket, LEN: int):
         _bytes = b""
         _num = 0
         while _num != LEN:
-            ready = select.select([s], [], [], self.socket_timeout)
-            if ready[0]:
+            __rlist, __wlist, __xlist = select.select([s], [], [], self.socket_timeout)
+            if __rlist:
                 _bytes += s.recv(LEN - _num)
                 _num = len(_bytes)
         return _bytes

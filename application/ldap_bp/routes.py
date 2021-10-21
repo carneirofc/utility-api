@@ -2,8 +2,8 @@ import datetime
 
 from flask import Blueprint, make_response, request
 
-from application.ldap.auth import Auth, delete_token, generate_token, get_from_token
-from application.utils import get_logger
+from ..common.utils import get_logger
+from .auth import Auth, delete_token, generate_token, get_from_token
 
 ldap_bp = Blueprint(
     "ldap_bp", __name__, template_folder="templates", static_folder="static"

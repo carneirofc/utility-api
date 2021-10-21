@@ -1,33 +1,68 @@
+import dataclasses
 import traceback
+import typing
 
 from .status import HttpStatusCode
 
 
-def _stracktrace():
+def _stacktrace():
     return traceback.format_exc()
 
 
+@dataclasses.dataclass
+class APIExceptionJson:
+    message: str
+    payload: str
+    stacktrace: str
+    status_code: int
+
+
+def make_error_message(e: Exception) -> APIExceptionJson:
+
+    return APIExceptionJson(
+        message=str(e),
+        payload="",
+        stacktrace=_stacktrace(),
+        status_code=HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
+
+
 class APIException(Exception):
-    status_code = HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
     message = ""
+    payload: typing.Optional[typing.Union[str, dict]] = None
+    status_code = HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
 
-    def __init__(self, message=None):
-        if message is not None:
-            self.message = message
+    def __init__(
+        self,
+        message: str = "",
+        status_code: int = HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR,
+        payload=None,
+    ):
+        super().__init__()
+        self.message = message
+        if status_code is not None:
+            self.status_code = status_code
+        self.payload = payload
 
-    def to_dict(self):
+    @property
+    def stacktrace(self):
+        return _stacktrace()
+
+    def __str__(self):
+        return f"{self.message}"
+
+    @property
+    def __dict__(self):
         return {
+            "payload": self.payload,
             "message": self.message,
             "stacktrace": self.stacktrace,
             "status_code": self.status_code,
         }
 
-    @property
-    def stacktrace(self):
-        return _stracktrace()
 
-    def __str__(self):
-        return f"{self}(message={self.message})"
+class InvalidAPIUsage(APIException):
+    status_code = HttpStatusCode.HTTP_400_BAD_REQUEST
 
 
 class ParseError(APIException):

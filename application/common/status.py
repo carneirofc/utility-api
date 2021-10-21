@@ -1,13 +1,38 @@
 """
 Descriptive HTTP status codes, for code readability.
 See RFC 2616 and RFC 6585.
+
+Code from: https://github.com/flask-api/flask-api/blob/develop/flask_api/status.py
+License: https://github.com/flask-api/flask-api/blob/develop/LICENSE.md
+
 RFC 2616: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 RFC 6585: http://tools.ietf.org/html/rfc6585
-Source: https://github.com/flask-api/flask-api/blob/develop/flask_api/status.py
 """
+from __future__ import unicode_literals
+
+
+def is_informational(code):
+    return code >= 100 and code <= 199
+
+
+def is_success(code):
+    return code >= 200 and code <= 299
+
+
+def is_redirect(code):
+    return code >= 300 and code <= 399
+
+
+def is_client_error(code):
+    return code >= 400 and code <= 499
+
+
+def is_server_error(code):
+    return code >= 500 and code <= 599
 
 
 class HttpStatusCode:
+
     HTTP_100_CONTINUE = 100
     HTTP_101_SWITCHING_PROTOCOLS = 101
 
@@ -63,23 +88,3 @@ class HttpStatusCode:
     HTTP_508_LOOP_DETECTED = 508
     HTTP_510_NOT_EXTENDED = 510
     HTTP_511_NETWORK_AUTHENTICATION_REQUIRED = 511
-
-
-def is_informational(code: int):
-    return code >= 100 and code <= 199
-
-
-def is_success(code: int):
-    return code >= 200 and code <= 299
-
-
-def is_redirect(code: int):
-    return code >= 300 and code <= 399
-
-
-def is_client_error(code: int):
-    return code >= 400 and code <= 499
-
-
-def is_server_error(code: int):
-    return code >= 500 and code <= 599

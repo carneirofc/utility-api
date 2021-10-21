@@ -4,10 +4,10 @@ import socket
 import threading
 from typing import Dict
 
-from siriuscommon import get_logger
 from siriuscommon.devices.spreadsheet import SheetName
 from siriuscommon.devices.spreadsheet.parser import loadSheets
 
+from ..common.utils import get_logger
 from .common import SPREADSHEET_SOCKET_PATH, SPREADSHEET_XLSX_PATH, BasicComm, Command
 
 SERVER_SOCKET_TIMEOUT = 5
@@ -50,35 +50,40 @@ class BackendServer(BasicComm):
             self.logger.warning('Removing socket at "{}"'.format(self.socket_path))
 
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
-
             s.bind(self.socket_path)
             s.listen()
+            self._socket_listen(s)
 
-            while self.run:
-                self.logger.debug(
-                    'Waiting for a connection at "{}" ...'.format(self.socket_path)
-                )
-                conn, addr = s.accept()
-                self.logger.debug("Client connected ...")
-                with conn:
-                    try:
-                        conn.setblocking(False)
-                        payload_bytes = self.fromClient(conn)
-                        if payload_bytes != b"":
-                            payload = pickle.loads(payload_bytes)
-                            response = pickle.dumps(self.handle(payload))
-                            self.toClient(conn, response)
-
-                    except InvalidParameter as e:
-                        self.logger.error('Invalid paylad content. "{}"'.format(e))
-                        self.toClient(conn, pickle.dumps({}))
-
-                    except Exception:
-                        self.logger.exception(
-                            "The connection with the unix socket {} has been closed."
-                        )
-                    self.logger.debug("Connection with client closed.")
         self.logger.info("Shutting down gracefully.")
+
+    def _socket_listen(self, s: socket.socket):
+        while self.run:
+            self.logger.debug(
+                'Waiting for a connection at "{}" ...'.format(self.socket_path)
+            )
+            conn, _addr = s.accept()
+            self.logger.debug("Client connected ...")
+            self._handle_client(conn)
+
+    def _handle_client(self, conn: socket.socket):
+        with conn:
+            try:
+                conn.setblocking(False)
+                payload_bytes = self.fromClient(conn)
+                if payload_bytes != b"":
+                    payload = pickle.loads(payload_bytes)
+                    response = pickle.dumps(self.handle(payload))
+                    self.toClient(conn, response)
+
+            except InvalidParameter as e:
+                self.logger.error('Invalid paylad content. "{}"'.format(e))
+                self.toClient(conn, pickle.dumps({}))
+
+            except Exception:
+                self.logger.exception(
+                    "The connection with the unix socket {} has been closed."
+                )
+            self.logger.debug("Connection with client closed.")
 
     def handle(self, payload: dict):
         command = payload["command"]
