@@ -8,7 +8,12 @@ from siriuscommon.devices.spreadsheet import SheetName
 from siriuscommon.devices.spreadsheet.parser import loadSheets
 
 from ..common.utils import get_logger
-from .common import SPREADSHEET_SOCKET_PATH, SPREADSHEET_XLSX_PATH, BasicComm, Command
+from .common import (
+    BasicComm,
+    Command,
+    get_app_spreadsheet_socket_path,
+    get_spreadsheet_xlsx_path,
+)
 
 SERVER_SOCKET_TIMEOUT = 5
 
@@ -18,10 +23,17 @@ class InvalidParameter(Exception):
 
 
 class BackendServer(BasicComm):
-    def __init__(self):
+    def __init__(self, socket_path: str = None, spreadsheet_xlsx_path: str = None):
         self.logger = get_logger("Backend")
         self.run = True
-        self.socket_path = SPREADSHEET_SOCKET_PATH
+        self.spreadsheet_xlsx_path = (
+            get_spreadsheet_xlsx_path()
+            if not spreadsheet_xlsx_path
+            else spreadsheet_xlsx_path
+        )
+        self.socket_path = (
+            get_app_spreadsheet_socket_path() if not socket_path else socket_path
+        )
         self.socket_timeout = SERVER_SOCKET_TIMEOUT
         self.thread = threading.Thread(target=self.listen, daemon=True)
 
@@ -92,7 +104,7 @@ class BackendServer(BasicComm):
         if command == Command.GET_DEVICE:
             return self.getDevice(**payload)
         elif command == Command.RELOAD_DATA:
-            self.sheetsData = loadSheets(SPREADSHEET_XLSX_PATH)
+            self.sheetsData = loadSheets(self.spreadsheet_xlsx_path)
             return True
 
         return None

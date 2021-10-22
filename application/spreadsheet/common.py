@@ -54,8 +54,9 @@ class BasicComm:
         return _bytes
 
 
-SPREADSHEET_SOCKET_PATH = current_app.config.get("SPREADSHEET_SOCKET_PATH")
-SPREADSHEET_XLSX_PATH = current_app.config.get("SPREADSHEET_XLSX_PATH")
+def get_app_spreadsheet_socket_path():
+    return current_app.config.get("SPREADSHEET_SOCKET_PATH")
 
-logger.info('Using spreadsheet path at "{}".'.format(SPREADSHEET_XLSX_PATH))
-logger.info('Using internal socket at "{}".'.format(SPREADSHEET_SOCKET_PATH))
+
+def get_spreadsheet_xlsx_path():
+    return current_app.config.get("SPREADSHEET_XLSX_PATH")

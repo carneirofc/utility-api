@@ -3,56 +3,66 @@ import pickle
 import socket
 import threading
 import time
+import typing
 
 from siriuscommon.devices.spreadsheet import SheetName
 
 from ..common.utils import get_logger
 from .common import (
-    SPREADSHEET_SOCKET_PATH,
-    SPREADSHEET_XLSX_PATH,
     BasicComm,
     Command,
     InvalidCommand,
     InvalidDevice,
+    get_app_spreadsheet_socket_path,
 )
 
 CLIENT_SOCKET_TIMEOUT = 10
 
 
 class SyncService:
-    def __init__(self):
+    def __init__(self, spreadsheet_xlsx_path: str):
+        self.spreadsheet_xlsx_path = spreadsheet_xlsx_path
         self.logger = get_logger("SyncService")
-        self.thread = threading.Thread(target=self.doWork, daemon=True)
-        self.update_time = None
+        self.thread = threading.Thread(target=self._doWork, daemon=True)
+        self.update_time: typing.Optional[float] = None
 
     def start(self):
         self.logger.info("Starting sync service.")
         self.thread.start()
 
-    def doWork(self):
+    def _tick(self):
+        time.sleep(5)
+
+    def _doWork(self):
         while True:
-            if os.path.exists(SPREADSHEET_XLSX_PATH):
-                current_update_time = os.path.getmtime(SPREADSHEET_XLSX_PATH)
-                if not self.update_time or self.update_time != current_update_time:
-                    try:
-                        client = BackendClient()
-                        res = client.reloadData()
-                        if not res:
-                            raise Exception('Method "reloadData" returned False.')
-                        self.update_time = current_update_time
-                        self.logger.info(
-                            'Update spreadsheet from "{}" at time "{}"'.format(
-                                SPREADSHEET_XLSX_PATH, self.update_time
-                            )
-                        )
-                    except Exception:
-                        self.logger.exception("Failed to update the spreadsheet.")
-            time.sleep(5)
+            self._tick()
+
+            if not os.path.exists(self.spreadsheet_xlsx_path):
+                continue
+
+            current_update_time = os.path.getmtime(self.spreadsheet_xlsx_path)
+            if not self.update_time or self.update_time != current_update_time:
+                self._reload_spreadsheet_data(current_update_time)
+
+    def _reload_spreadsheet_data(self, current_update_time):
+        try:
+            client = BackendClient()
+            res = client.reloadData()
+            if not res:
+                raise Exception('Method "reloadData" returned False.')
+            self.update_time = current_update_time
+            self.logger.info(
+                f'Update spreadsheet "{self.spreadsheet_xlsx_path}" at "{self.update_time}"'
+            )
+        except Exception:
+            self.logger.exception("Failed to update the spreadsheet.")
 
 
 class BackendClient(BasicComm):
-    def __init__(self):
-        self.socket_path = SPREADSHEET_SOCKET_PATH
+    def __init__(self, socket_path: str = None):
+        self.socket_path = (
+            get_app_spreadsheet_socket_path() if not socket_path else socket_path
+        )
         self.socket_timeout = CLIENT_SOCKET_TIMEOUT
 
         self.logger = get_logger("Client")
