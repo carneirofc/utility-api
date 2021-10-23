@@ -8,3 +8,9 @@ apt instal libsasl2-dev libldap2-dev libssl-dev
 ```
 
 # Spreadsheet
+
+## Testing
+```
+coverage run -m unittest discover
+coverage report
+```

@@ -74,9 +74,7 @@ class Auth:
 
         except Exception:
             raise Exception(
-                "Failed to get information from Authorization header. {}".format(
-                    self.authorization
-                )
+                f"Failed to get information from Authorization header. {self.authorization}"
             )
 
     def get_search_user(

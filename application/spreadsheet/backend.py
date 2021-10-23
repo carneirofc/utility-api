@@ -1,7 +1,7 @@
+import multiprocessing
 import os
 import pickle
 import socket
-import threading
 from typing import Dict
 
 from siriuscommon.devices.spreadsheet import SheetName
@@ -35,13 +35,17 @@ class BackendServer(BasicComm):
             get_app_spreadsheet_socket_path() if not socket_path else socket_path
         )
         self.socket_timeout = SERVER_SOCKET_TIMEOUT
-        self.thread = threading.Thread(target=self.listen, daemon=True)
+        self.process = multiprocessing.Process(target=self.listen, daemon=True)
 
         self.sheetsData: Dict[SheetName, dict] = {}
 
+    def stop(self):
+        self.logger.info("Shutting down backend server process.")
+        self.process.kill()
+
     def start(self):
-        self.logger.info("Starting backend server thread.")
-        self.thread.start()
+        self.logger.info("Starting backend server process.")
+        self.process.start()
 
     def fromClient(self, conn):
         payload_bytes = b""
@@ -76,6 +80,7 @@ class BackendServer(BasicComm):
             conn, _addr = s.accept()
             self.logger.debug("Client connected ...")
             self._handle_client(conn)
+        self.logger.info("Socket shutting down")
 
     def _handle_client(self, conn: socket.socket):
         with conn:
@@ -88,12 +93,13 @@ class BackendServer(BasicComm):
                     self.toClient(conn, response)
 
             except InvalidParameter as e:
-                self.logger.error('Invalid paylad content. "{}"'.format(e))
-                self.toClient(conn, pickle.dumps({}))
+                msg = 'Invalid paylad content. "{}"'.format(e)
+                self.logger.error(msg)
+                self.toClient(conn, pickle.dumps({"status": "failure", "error": msg}))
 
             except Exception:
                 self.logger.exception(
-                    "The connection with the unix socket {} has been closed."
+                    "Unexpected exception, the connection with the unix socket {} has been closed."
                 )
             self.logger.debug("Connection with client closed.")
 
@@ -109,5 +115,5 @@ class BackendServer(BasicComm):
 
         return None
 
-    def getDevice(self, sheetName: SheetName = None, **kwargs):
-        return self.sheetsData.get(sheetName, {})
+    def getDevice(self, sheetName: SheetName, **kwargs):
+        return self.sheetsData.get(sheetName.value, {})

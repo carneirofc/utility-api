@@ -14,14 +14,19 @@ from .common import (
     InvalidCommand,
     InvalidDevice,
     get_app_spreadsheet_socket_path,
+    get_spreadsheet_xlsx_path,
 )
 
 CLIENT_SOCKET_TIMEOUT = 10
 
 
 class SyncService:
-    def __init__(self, spreadsheet_xlsx_path: str):
-        self.spreadsheet_xlsx_path = spreadsheet_xlsx_path
+    def __init__(self, spreadsheet_xlsx_path: str = None):
+        self.spreadsheet_xlsx_path = (
+            get_spreadsheet_xlsx_path()
+            if not spreadsheet_xlsx_path
+            else spreadsheet_xlsx_path
+        )
         self.logger = get_logger("SyncService")
         self.thread = threading.Thread(target=self._doWork, daemon=True)
         self.update_time: typing.Optional[float] = None
@@ -88,8 +93,8 @@ class BackendClient(BasicComm):
     def reloadData(self):
         return self.sendCommand({"command": Command.RELOAD_DATA})
 
-    def getDevice(self, ip, deviceType):
-        if not deviceType or not (deviceType in SheetName):
+    def getDevice(self, ip: str, deviceType: str):
+        if not deviceType or not (SheetName.has_key(deviceType.upper())):
             raise InvalidDevice('Invalid device "{}".'.format(deviceType))
 
         return self.sendCommand(
