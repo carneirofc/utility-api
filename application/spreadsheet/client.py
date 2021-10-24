@@ -1,5 +1,4 @@
 import os
-import pickle
 import socket
 import threading
 import time
@@ -65,6 +64,7 @@ class SyncService:
 
 class BackendClient(BasicComm):
     def __init__(self, socket_path: str = None):
+        super().__init__()
         self.socket_path = (
             get_app_spreadsheet_socket_path() if not socket_path else socket_path
         )
@@ -79,28 +79,21 @@ class BackendClient(BasicComm):
 
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
             s.connect(self.socket_path)
-            payload_bytes = pickle.dumps(payload)
-            payload_length = len(payload_bytes).to_bytes(4, "big")
-
-            self.sendBytes(s, payload_length)
-            self.sendBytes(s, payload_bytes)
-
-            response_len = int.from_bytes(self.recvBytes(s, 4), "big")
-            response_bytes = self.recvBytes(s, response_len)
-            response = pickle.loads(response_bytes)
+            self._send_message(s, payload)
+            response = self._recv_message(s)
             return response
 
     def reloadData(self):
-        return self.sendCommand({"command": Command.RELOAD_DATA})
+        return self.sendCommand({"command": Command.RELOAD_DATA.value})
 
     def getDevice(self, ip: str, deviceType: str):
-        if not deviceType or not (SheetName.has_key(deviceType.upper())):
+        if not deviceType or not (SheetName.has_key(deviceType)):
             raise InvalidDevice('Invalid device "{}".'.format(deviceType))
 
         return self.sendCommand(
             {
-                "command": Command.GET_DEVICE,
+                "command": Command.GET_DEVICE.value,
                 "ip": ip,
-                "sheetName": SheetName.from_key(deviceType),
+                "sheetName": SheetName.from_key(deviceType).value,
             }
         )

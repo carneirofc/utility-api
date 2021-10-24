@@ -1,6 +1,5 @@
 import multiprocessing
 import os
-import pickle
 import socket
 from typing import Dict
 
@@ -24,6 +23,7 @@ class InvalidParameter(Exception):
 
 class BackendServer(BasicComm):
     def __init__(self, socket_path: str = None, spreadsheet_xlsx_path: str = None):
+        super().__init__()
         self.logger = get_logger("Backend")
         self.run = True
         self.spreadsheet_xlsx_path = (
@@ -46,19 +46,6 @@ class BackendServer(BasicComm):
     def start(self):
         self.logger.info("Starting backend server process.")
         self.process.start()
-
-    def fromClient(self, conn):
-        payload_bytes = b""
-        payload_length = int.from_bytes(self.recvBytes(conn, 4), "big")
-        payload_bytes = self.recvBytes(conn, payload_length)
-
-        return payload_bytes
-
-    def toClient(self, conn, response):
-        response_length = len(response)
-
-        self.sendBytes(conn, response_length.to_bytes(4, "big"))
-        self.sendBytes(conn, response)
 
     def listen(self):
         if os.path.exists(self.socket_path):
@@ -86,16 +73,14 @@ class BackendServer(BasicComm):
         with conn:
             try:
                 conn.setblocking(False)
-                payload_bytes = self.fromClient(conn)
-                if payload_bytes != b"":
-                    payload = pickle.loads(payload_bytes)
-                    response = pickle.dumps(self.handle(payload))
-                    self.toClient(conn, response)
+                payload = self._recv_message(conn)
+                response = self.handle(payload)
+                self._send_message(conn, response)
 
             except InvalidParameter as e:
                 msg = 'Invalid paylad content. "{}"'.format(e)
                 self.logger.error(msg)
-                self.toClient(conn, pickle.dumps({"status": "failure", "error": msg}))
+                self._send_message(conn, {"status": "failure", "error": msg})
 
             except Exception:
                 self.logger.exception(
@@ -115,5 +100,5 @@ class BackendServer(BasicComm):
 
         return None
 
-    def getDevice(self, sheetName: SheetName, **kwargs):
-        return self.sheetsData.get(sheetName.value, {})
+    def getDevice(self, sheetName: str, **kwargs):
+        return self.sheetsData.get(sheetName, {})
