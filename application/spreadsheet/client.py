@@ -87,8 +87,8 @@ class BackendClient(BasicComm):
         return self.sendCommand({"command": Command.RELOAD_DATA.value})
 
     def getDevice(self, ip: str, deviceType: str):
-        if not deviceType or not (SheetName.has_key(deviceType)):
-            raise InvalidDevice('Invalid device "{}".'.format(deviceType))
+        if not deviceType or not (SheetName.has_sheet(deviceType)):
+            raise InvalidDevice(f'Invalid device "{deviceType}".')
 
         return self.sendCommand(
             {

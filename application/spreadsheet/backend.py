@@ -50,7 +50,7 @@ class BackendServer(BasicComm):
     def listen(self):
         if os.path.exists(self.socket_path):
             os.remove(self.socket_path)
-            self.logger.warning('Removing socket at "{}"'.format(self.socket_path))
+            self.logger.warning(f'Removing socket at "{self.socket_path}"')
 
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
             s.bind(self.socket_path)
@@ -61,9 +61,7 @@ class BackendServer(BasicComm):
 
     def _socket_listen(self, s: socket.socket):
         while self.run:
-            self.logger.debug(
-                'Waiting for a connection at "{}" ...'.format(self.socket_path)
-            )
+            self.logger.debug(f'Waiting for a connection at "{self.socket_path}" ...')
             conn, _addr = s.accept()
             self.logger.debug("Client connected ...")
             self._handle_client(conn)
@@ -78,27 +76,27 @@ class BackendServer(BasicComm):
                 self._send_message(conn, response)
 
             except InvalidParameter as e:
-                msg = 'Invalid paylad content. "{}"'.format(e)
+                msg = f'Invalid paylad content. "{e}"'
                 self.logger.error(msg)
                 self._send_message(conn, {"status": "failure", "error": msg})
 
             except Exception:
                 self.logger.exception(
-                    "Unexpected exception, the connection with the unix socket {} has been closed."
+                    f"Unexpected exception, the connection with the unix socket {self.socket_path} has been closed."
                 )
             self.logger.debug("Connection with client closed.")
 
     def handle(self, payload: dict):
         command = payload["command"]
-        self.logger.info("Handle: {}".format(payload))
+        self.logger.info(f"Handle: {payload}")
 
         if command == Command.GET_DEVICE:
-            return self.getDevice(**payload)
+            return self.getDevice(sheetName=payload.get("sheetName", ""))
         elif command == Command.RELOAD_DATA:
             self.sheetsData = loadSheets(self.spreadsheet_xlsx_path)
             return True
 
-        return None
+        return {"status": "failure", "error": "invalid command"}
 
     def getDevice(self, sheetName: str, **kwargs):
         return self.sheetsData.get(sheetName, {})
