@@ -1,4 +1,5 @@
 # utility-api
+[![Lint](https://github.com/carneirofc/utility-api/actions/workflows/lint.yml/badge.svg)](https://github.com/carneirofc/utility-api/actions/workflows/lint.yml)
 
 Webserver containing usefull APIs for Sirius.
 ## Dependencies
