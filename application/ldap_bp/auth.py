@@ -72,10 +72,10 @@ class Auth:
             user, passwd = auth_decoded.split(":", 1)
             return user, passwd
 
-        except Exception:
+        except Exception as e:
             raise Exception(
                 f"Failed to get information from Authorization header. {self.authorization}"
-            )
+            ) from e
 
     def get_search_user(
         self, ldap_connection: ldap.ldapobject.LDAPObject, user: str, passw: str
